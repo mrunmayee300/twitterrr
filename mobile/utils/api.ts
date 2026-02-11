@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "https://twitterrr-2d7h.vercel.app/";
@@ -9,11 +9,13 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "https://twitterrr-2d7h.
 export const createApiClient = (getToken: () => Promise<string | null>): AxiosInstance => {
   const api = axios.create({ baseURL: API_BASE_URL });
 
-  api.interceptors.request.use(async (config) => {
+api.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
     const token = await getToken();
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  config.headers.set("Authorization", `Bearer ${token}`);
+}
+
     return config;
   });
 
